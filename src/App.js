@@ -25,10 +25,15 @@ function App() {
   })
 
   const calculateMortgageQuote = () => {
-    var numPayments = (repaymentTime * 12)
-    var principalAmount = (purchasePrice - downPayment)
-    setLoanAmount(principalAmount)
-    return (principalAmount * ( ((interestRate*(1 + interestRate))^numPayments) / ((((1 + interestRate))^numPayments) - 1 )) );
+    const p = purchasePrice - downPayment;
+    const r = (interestRate / 12).toFixed(20);
+    const n = repaymentTime * 12;
+
+    const mp = p * (r * ((1+r) ^ n) / (((1+r)^n) - 1));
+   
+    setLoanAmount(p)
+    setMortgageQuote(mp)
+   
   }
 
   return (
@@ -59,19 +64,17 @@ function App() {
                 pb={8}
                 
               >
-                <SliderComponent width={'400px'} Placeholder={"Purchase Price"} stateValue={formatter.format(purchasePrice)} onChangeFunction={(val) => {setpurchasePrice(val)}} />
+                <SliderComponent width={'400px'} Placeholder={"Purchase Price"} maxValue={15000000} stateValue={formatter.format(purchasePrice)} onChangeFunction={(val) => {setpurchasePrice(val)}} />
                 <SliderComponent width={'400px'} Placeholder={"Down Payment"} stateValue={formatter.format(downPayment)} onChangeFunction={(val) => {setDownPayment(val)}} />
-                <SliderComponent width={'400px'} Placeholder={"Repayment Time"} stateValue={(repaymentTime == 0) ? `${repaymentTime}` : `${repaymentTime} years`} maxValue={25} onChangeFunction={(val) => {setRepaymentTime(val)}} />
-                <SliderComponent width={'400px'} Placeholder={"Interest Rate"} stateValue={`${interestRate}%`} maxValue={100} onChangeFunction={(val) => {setInterestRate(val)}} />
+                <SliderComponent width={'400px'} Placeholder={"Repayment Time"} stateValue={(repaymentTime === 0) ? `${repaymentTime}` : `${repaymentTime} years`} maxValue={40} onChangeFunction={(val) => {setRepaymentTime(val)}} />
+                <SliderComponent width={'400px'} Placeholder={"Interest Rate"} stateValue={`${interestRate * 100}%`} maxValue={100} onChangeFunction={(val) => {setInterestRate((val / 100))}} />
                 {/* Okay these two components below will take text input and convert it to a numerical value */}
                 <CurrencyDisplayComponent placeholderText={'Loan amount:'} textValue={formatter.format(loanAmount)} />
-                <CurrencyDisplayComponent placeholderText={'Estimated pr month:'} textValue={formatter.format(mortgageQuote)} />
+                <CurrencyDisplayComponent placeholderText={'Estimated pr month:'} textValue={formatter.format((mortgageQuote))} />
                 
               </Flex>
               <Button mt={10} padding={10} maxWidth='400px'colorScheme="purple" onClick={(e) => {
-                setMortgageQuote(calculateMortgageQuote)
-                console.log(calculateMortgageQuote())
-              
+                calculateMortgageQuote()
               }}>
                 
                 Get a Mortgage Quote</Button>

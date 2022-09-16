@@ -15,7 +15,7 @@ function App() {
   var formatter = new Intl.NumberFormat("en-US", {
     style: "currency",
     currency: "USD",
-    maximumFractionDigits: 0,
+    maximumFractionDigits: 2,
   });
 
   const calculateMortgageQuote = () => {
@@ -35,7 +35,7 @@ function App() {
         justifyContent="center"
         alignItems="center"
         flexDirection="column"
-        height="100vh"
+        height={window.innerHeight}
         bg="#f5f3fb"
       >
         <Flex
